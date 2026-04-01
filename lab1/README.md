@@ -52,7 +52,7 @@
 
 ## 🖼️ UML Class Diagram
 
-![Class Diagram](./ClassDiagram.png)
+![Class Diagram](./lab1.png)
 
 ---
 
