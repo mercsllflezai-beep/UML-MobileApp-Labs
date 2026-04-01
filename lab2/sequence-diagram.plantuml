@@ -1,0 +1,61 @@
+@startuml sequence-diagram
+
+skinparam backgroundColor White
+skinparam sequence {
+  ActorBorderColor Black
+  LifeLineBorderColor Black
+  ParticipantBorderColor Black
+  ArrowColor Black
+}
+
+actor "RegisteredUser" as User
+participant "HelpRequest" as HR
+participant "MatchingService" as MS
+participant "Psychologist" as Psy
+participant "Session" as Ses
+participant "Notification" as Notif
+
+== Инициация запроса ==
+
+User -> User: Нажимает "Экстренная помощь"
+User -> HR: requestEmergencyHelp(type, location)
+activate HR
+HR -> HR: generateSession()
+HR -> MS: findAvailablePsychologist(criteria)
+activate MS
+
+== Поиск психолога ==
+
+MS -> MS: Поиск по критериям
+MS -> Psy: notifyEmergency(requestData)
+activate Psy
+Psy -> Psy: Проверка доступности
+
+alt Принимает сессию
+  Psy --> MS: acceptSession(sessionId)
+  MS -> Ses: createSession(data)
+  activate Ses
+  Ses -> Ses: saveToDatabase()
+  Ses --> MS: sessionCreated
+  MS --> HR: psychologistFound(psychId)
+  HR -> Notif: sendConfirmation(user, psych)
+  activate Notif
+  Notif --> User: "Сессия началась"
+  deactivate Notif
+  deactivate Ses
+  
+else Отклоняет / Таймаут
+  Psy --> MS: declineSession()
+  MS -> MS: Повторить поиск (попытка 2/3)
+  
+  opt Все попытки исчерпаны
+    MS --> HR: noPsychologistAvailable
+    HR -> User: offerChatBotOrCallback()
+  end
+end
+
+deactivate Psy
+deactivate MS
+deactivate HR
+
+@enduml
