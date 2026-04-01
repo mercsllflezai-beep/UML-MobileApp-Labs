@@ -42,7 +42,7 @@
 
 ## 🛠 Инструменты
 
-![UML](https://img.shields.io/badge/-UML-0055A4?style=flat-square&logo=uml&logoColor=white)
+![PlantUML](https://img.shields.io/badge/-UML-0055A4?style=flat-square&logo=uml&logoColor=white)
 ![Draw.io](https://img.shields.io/badge/-Draw.io-F08000?style=flat-square&logo=diagramsdotnet&logoColor=white)
 ![Markdown](https://img.shields.io/badge/-Markdown-000000?style=flat-square&logo=markdown&logoColor=white)
 
