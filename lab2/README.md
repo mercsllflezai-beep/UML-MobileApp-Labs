@@ -27,7 +27,7 @@
 
 ### Диаграмма активности
 
-![Activity Diagram](./diagrams/activity-diagram.png)
+![Activity Diagram](activity-diagram.png)
 
 ---
 
