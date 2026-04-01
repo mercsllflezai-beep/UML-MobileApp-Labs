@@ -45,7 +45,7 @@
 
 ### Диаграмма взаимодействия
 
-![Communication Diagram](./diagrams/communication-diagram.png)
+![Communication Diagram](communication-diagram.png)
 
 ---
 
@@ -66,7 +66,7 @@
 
 ### Диаграмма последовательности
 
-![Sequence Diagram](./diagrams/sequence-diagram.png)
+![Sequence Diagram](sequence-diagram.png)
 
 ---
 
@@ -94,7 +94,7 @@
 
 ### Диаграмма состояний
 
-![State Diagram](./diagrams/state-diagram.png)
+![State Diagram](state-diagram.png)
 
 ---
 
@@ -102,14 +102,14 @@
 
 | Файл | Описание |
 |------|----------|
-| `diagrams/activity-diagram.png` | Диаграмма активности |
-| `diagrams/communication-diagram.png` | Диаграмма взаимодействия |
-| `diagrams/sequence-diagram.png` | Диаграмма последовательности |
-| `diagrams/state-diagram.png` | Диаграмма состояний |
-| `diagrams/activity-diagram.puml` | PlantUML код активности |
-| `diagrams/communication-diagram.puml` | PlantUML код взаимодействия |
-| `diagrams/sequence-diagram.puml` | PlantUML код последовательности |
-| `diagrams/state-diagram.puml` | PlantUML код состояний |
+| `activity-diagram.png` | Диаграмма активности |
+| `communication-diagram.png` | Диаграмма взаимодействия |
+| `sequence-diagram.png` | Диаграмма последовательности |
+| `state-diagram.png` | Диаграмма состояний |
+| `activity-diagram.wsd` | PlantUML код активности |
+| `communication-diagram.wsd` | PlantUML код взаимодействия |
+| `sequence-diagram.wsd` | PlantUML код последовательности |
+| `state-diagram.wsd` | PlantUML код состояний |
 
 ---
 
@@ -117,7 +117,6 @@
 
 В ходе работы построены динамические диаграммы UML для сценария **«Запрос экстренной психологической помощи»** системы HelpHub.
 
-- **Диаграмма активности** показала логику процесса с ветвлениями и параллельными действиями.
 - **Диаграмма взаимодействия** продемонстрировала обмен сообщениями между объектами.
 - **Диаграмма последовательности** детализировала временной порядок вызовов.
 - **Диаграмма состояний** описала жизненный цикл сессии.
