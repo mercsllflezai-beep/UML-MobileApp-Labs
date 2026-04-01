@@ -1,0 +1,62 @@
+@startuml communication-diagram
+
+skinparam backgroundColor White
+skinparam sequence {
+  ActorBorderColor Black
+  LifeLineBorderColor Black
+  ParticipantBorderColor Black
+  ArrowColor Black
+}
+
+title "Диаграмма взаимодействия: Запрос экстренной помощи"
+
+participant "RegisteredUser" as User
+participant "HelpRequest" as HR
+participant "MatchingService" as MS
+participant "Psychologist" as Psy
+participant "Session" as Ses
+participant "Notification" as Notif
+
+== Инициация запроса ==
+
+User -> HR: 1: requestEmergencyHelp(type, location)
+activate HR
+HR -> HR: 1.1: generateSession()
+HR -> MS: 1.2: findAvailablePsychologist(criteria)
+activate MS
+
+== Поиск психолога ==
+
+MS -> MS: 1.3: Поиск по критериям
+MS -> Psy: 1.4: notifyEmergency(requestData)
+activate Psy
+Psy -> Psy: 1.5: Проверка доступности
+
+alt Принимает сессию
+  Psy --> MS: 1.6: acceptSession(sessionId)
+  MS -> Ses: 1.7: createSession(data)
+  activate Ses
+  Ses -> Ses: 1.8: saveToDatabase()
+  Ses --> MS: 1.9: sessionCreated
+  MS --> HR: 1.10: psychologistFound(psychId)
+  HR -> Notif: 1.11: sendConfirmation(user, psych)
+  activate Notif
+  Notif --> User: 1.12: "Сессия началась"
+  deactivate Notif
+  deactivate Ses
+  
+else Отклоняет / Таймаут
+  Psy --> MS: 1.6: declineSession()
+  MS -> MS: 1.7: Повторить поиск (попытка 2/3)
+  
+  opt Все попытки исчерпаны
+    MS --> HR: 1.8: noPsychologistAvailable
+    HR -> User: 1.9: offerChatBotOrCallback()
+  end
+end
+
+deactivate Psy
+deactivate MS
+deactivate HR
+
+@enduml
