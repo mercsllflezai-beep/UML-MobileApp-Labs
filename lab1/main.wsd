@@ -1,1 +1,175 @@
+@startuml ClassDiagram
 
+' Стиль классов
+skinparam classAttributeIconSize 0
+skinparam classFontColor Black
+skinparam classBackgroundColor White
+skinparam classBorderColor Black
+skinparam linetype ortho
+
+' ==================== КЛАССЫ ====================
+
+class User {
+    +id: int
+    +name: string
+    +email: string
+    +passwordHash: string
+    --
+    +login(credentials): bool
+    +logout(): void
+    +viewProfile(): Profile
+}
+
+class RegisteredUser {
+    +communities: List<Community>
+    +events: List<Event>
+    --
+    +joinCommunity(communityId): void
+    +createEvent(data): Event
+    +requestHelp(): Session
+    +sendMessage(content): Message
+}
+
+class Psychologist {
+    +license: string
+    +specialization: List<string>
+    +rating: float
+    +isAvailable: bool
+    --
+    +acceptSession(sessionId): bool
+    +setAvailability(status): void
+    +getRating(): float
+}
+
+class Moderator {
+    +permissions: List<string>
+    --
+    +reviewContent(contentId): void
+    +banUser(userId): void
+    +approveCommunity(communityId): bool
+}
+
+class Administrator {
+    --
+    +viewAllUsers(): List<User>
+    +manageSystem(config): void
+}
+
+class Guest {
+    --
+    +register(data): RegisteredUser
+}
+
+class Profile {
+    +userId: int
+    +name: string
+    +email: string
+    +registrationDate: datetime
+    +bio: string
+}
+
+class Community {
+    +id: int
+    +name: string
+    +description: string
+    +members: List<RegisteredUser>
+    +isPrivate: bool
+    --
+    +addMember(user): void
+    +removeMember(user): void
+    +createEvent(data): Event
+}
+
+class Event {
+    +id: int
+    +title: string
+    +dateTime: datetime
+    +location: string
+    +maxParticipants: int
+    +creator: RegisteredUser
+    --
+    +registerParticipant(user): void
+    +cancel(): void
+}
+
+class Session {
+    +id: int
+    +startTime: datetime
+    +endTime: datetime
+    +status: string {enum: PENDING, ACTIVE, COMPLETED, CANCELLED}
+    +psychologist: Psychologist
+    +user: RegisteredUser
+    --
+    +start(): void
+    +end(): void
+    +cancel(): void
+}
+
+class Message {
+    +id: int
+    +content: string
+    +timestamp: datetime
+    +isAnonymous: bool
+    +sender: User
+    --
+    +edit(newContent): void
+    +delete(): void
+}
+
+class Chat {
+    +id: int
+    +participants: List<User>
+    +messages: List<Message>
+    +isAnonymous: bool
+    --
+    +sendMessage(content): Message
+    +getHistory(): List<Message>
+}
+
+' ==================== ОТНОШЕНИЯ ====================
+
+' Наследование (Users)
+User <|-- RegisteredUser
+User <|-- Psychologist
+User <|-- Moderator
+User <|-- Administrator
+User <|-- Guest
+
+' Композиция
+Community *-- Event : содержит
+Session *-- Message : содержит
+Chat *-- Message : содержит
+
+' Агрегация
+Community o-- RegisteredUser : участники
+Chat o-- User : участники
+
+' Ассоциация
+Session --> Psychologist : проводится
+Session --> RegisteredUser : запрашивается
+Event --> RegisteredUser : создаётся
+Message --> User : отправлено
+
+' Зависимости
+Guest ..> RegisteredUser : создаёт
+RegisteredUser ..> Session : запрашивает
+RegisteredUser ..> Community : участвует
+User ..> Profile : возвращает
+
+' Подписи к отношениям
+note top of Psychologist
+  Сертифицированный специалист
+  с лицензией и рейтингом
+end note
+
+note bottom of Session
+  Сеанс психологической помощи
+  статус: PENDING/ACTIVE/COMPLETED
+end note
+
+note right of Community
+  Сообщества могут быть
+  публичными или приватными
+end note
+
+@enduml
