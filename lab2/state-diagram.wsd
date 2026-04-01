@@ -1,1 +1,56 @@
+@startuml state-diagram
 
+skinparam backgroundColor White
+skinparam state {
+  BackgroundColor White
+  BorderColor Black
+  ArrowColor Black
+}
+
+[*] --> Created : generateSession()
+
+state Created {
+  note right
+    Сессия создана,
+    ожидает подтверждения
+  end note
+}
+
+Created --> Waiting : notifyPsychologist()
+
+state Waiting {
+  note right
+    Ожидание ответа\nпсихолога\n(таймаут 5 мин)
+  end note
+}
+
+Waiting --> Active : acceptSession()
+Waiting --> Expired : timeout(>5min)
+
+state Active {
+  state "InProgress" as InProg
+  note right
+    Сессия активна,\nидёт общение
+  end note
+  
+  InProg --> Completed : endSession()
+  InProg --> Interrupted : connectionLost()
+}
+
+Active --> Completed : endSession()
+Active --> Interrupted : connectionLost()
+
+state Interrupted {
+  note right
+    Соединение разорвано,\nвозможен reconnect\n(10 минут)
+  end note
+}
+
+Interrupted --> Active : reconnect()
+Interrupted --> Failed : reconnectTimeout()
+
+Completed --> [*] : saveToHistory()
+Failed --> [*] : logFailure()
+Expired --> [*] : notifyUser()
+
+@enduml
