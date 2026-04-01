@@ -1,1 +1,92 @@
+@startuml use-case-diagram
 
+skinparam backgroundColor White
+skinparam actor {
+  BackgroundColor White
+  BorderColor Black
+}
+skinparam usecase {
+  BackgroundColor White
+  BorderColor Black
+}
+
+title "Диаграмма вариантов использования: HelpHub"
+
+left to right direction
+
+actor "Guest" as guest
+actor "RegisteredUser" as user
+actor "Psychologist" as psych
+actor "Moderator" as mod
+actor "Administrator" as admin
+
+package "HelpHub System" {
+  
+  usecase "Зарегистрироваться" as UC_Register
+  usecase "Войти в систему" as UC_Login
+  usecase "Выйти из системы" as UC_Logout
+  usecase "Просмотреть главную" as UC_Home
+  usecase "Просмотреть профиль" as UC_Profile
+  
+  usecase "Запросить экстренную помощь" as UC_Emergency
+  usecase "Присоединиться к сообществу" as UC_JoinCommunity
+  usecase "Создать сообщество" as UC_CreateCommunity
+  usecase "Создать мероприятие" as UC_CreateEvent
+  usecase "Участвовать в чате" as UC_Chat
+  usecase "Написать сообщение" as UC_Message
+  
+  usecase "Принять сессию" as UC_AcceptSession
+  usecase "Установить доступность" as UC_SetAvailability
+  usecase "Просмотреть расписание" as UC_Schedule
+  
+  usecase "Проверить контент" as UC_ReviewContent
+  usecase "Заблокировать пользователя" as UC_BanUser
+  usecase "Одобрить сообщество" as UC_ApproveCommunity
+  
+  usecase "Просмотреть всех пользователей" as UC_ViewAllUsers
+  usecase "Управлять пользователем" as UC_ManageUser
+  usecase "Просмотреть логи" as UC_ViewLogs
+  usecase "Управлять системой" as UC_ManageSystem
+}
+
+' Guest
+guest --> UC_Register
+guest --> UC_Login
+guest --> UC_Home
+
+' RegisteredUser
+user --> UC_Logout
+user --> UC_Profile
+user --> UC_Emergency
+user --> UC_JoinCommunity
+user --> UC_CreateCommunity
+user --> UC_CreateEvent
+user --> UC_Chat
+user --> UC_Message
+
+' Psychologist
+psych --> UC_AcceptSession
+psych --> UC_SetAvailability
+psych --> UC_Schedule
+psych --> UC_Profile
+psych --> UC_Chat
+
+' Moderator
+mod --> UC_ReviewContent
+mod --> UC_BanUser
+mod --> UC_ApproveCommunity
+
+' Administrator
+admin --> UC_ViewAllUsers
+admin --> UC_ManageUser
+admin --> UC_ViewLogs
+admin --> UC_ManageSystem
+admin --> UC_Profile
+
+' Включения и расширения
+UC_ManageUser ..> UC_ViewAllUsers : <<include>>
+UC_Emergency ..> UC_AcceptSession : <<extend>>
+UC_CreateCommunity ..> UC_ApproveCommunity : <<extend>>
+UC_Chat ..> UC_Message : <<include>>
+
+@enduml
