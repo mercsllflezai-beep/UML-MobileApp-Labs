@@ -52,4 +52,4 @@
 
 - **Telegram:** [@zwegner](https://t.me/zwegner)
 - **Email:** [airogoff@yandex.ru](mailto:airogoff@yandex.ru)
-- **GitHub:** [@YOUR_GITHUB_USERNAME](https://github.com/mercsllfelzai-beep)
+
