@@ -1,0 +1,93 @@
+@startuml component-diagram
+
+skinparam backgroundColor White
+skinparam component {
+  BackgroundColor White
+  BorderColor Black
+  ArrowColor Black
+}
+
+title "Диаграмма компонентов: HelpHub"
+
+package "Client Layer" {
+  component [Mobile App\n(iOS/Android)] as MobileApp
+  component [Web Interface\n(React/Vue)] as WebApp
+}
+
+package "API Gateway" {
+  component [API Gateway\n(REST API)] as Gateway
+  component [Nginx\n(Load Balancer)] as Nginx
+}
+
+package "Application Layer" {
+  component [Auth Module] as Auth
+  component [User Module] as User
+  component [Session Module] as Session
+  component [Community Module] as Community
+  component [Chat Module] as Chat
+  component [Notification Module] as Notification
+  
+  component [Matching Service] as Matching
+  component [Moderation Service] as Moderation
+}
+
+package "Data Access Layer" {
+  component [User Repository] as UserRepo
+  component [Session Repository] as SessionRepo
+  component [Community Repository] as CommunityRepo
+  component [Chat Repository] as ChatRepo
+}
+
+package "Database Layer" {
+  database [PostgreSQL\n(Main DB)] as DB
+  database [Redis\n(Cache/Sessions)] as Redis
+}
+
+package "External Services" {
+  component [Firebase\n(Push Notifications)] as Firebase
+  component [S3 Storage\n(Files/Media)] as S3
+  component [Email Service\n(SMTP)] as Email
+}
+
+' Связи клиентского слоя
+MobileApp --> Gateway : HTTPS
+WebApp --> Gateway : HTTPS
+Gateway --> Nginx : HTTP/2
+
+' Связи шлюза с модулями
+Nginx --> Auth
+Nginx --> User
+Nginx --> Session
+Nginx --> Community
+Nginx --> Chat
+Nginx --> Notification
+
+' Связи между модулями
+Session --> Matching : использует
+Chat --> Moderation : использует
+Notification --> Auth
+Notification --> User
+Notification --> Session
+
+' Связи с репозиториями
+Auth --> UserRepo
+User --> UserRepo
+Session --> SessionRepo
+Community --> CommunityRepo
+Chat --> ChatRepo
+
+' Связи с БД
+UserRepo --> DB
+SessionRepo --> DB
+CommunityRepo --> DB
+ChatRepo --> DB
+UserRepo --> Redis
+SessionRepo --> Redis
+
+' Внешние сервисы
+Notification --> Firebase
+Notification --> Email
+Chat --> S3
+Community --> S3
+
+@enduml
