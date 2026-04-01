@@ -1,1 +1,114 @@
+@startuml deployment-diagram
 
+skinparam backgroundColor White
+skinparam node {
+  BackgroundColor White
+  BorderColor Black
+}
+skinparam artifact {
+  BackgroundColor LightGray
+  BorderColor Black
+}
+
+title "Диаграмма развёртывания: HelpHub"
+
+node "Client Devices" as Client {
+  node "Mobile Device" as Mobile {
+    artifact "Mobile App\n(iOS/Android)" as MobileApp
+    artifact "React Native Bundle" as RNBundle
+  }
+  
+  node "Web Browser" as Browser {
+    artifact "Web Interface\n(React/Vue)" as WebApp
+    artifact "frontend_bundle.js" as JSBundle
+  }
+}
+
+node "API Gateway" as Gateway {
+  artifact "Nginx" as Nginx
+  artifact "nginx.conf" as NginxConf
+  artifact "SSL Certificate" as SSL
+}
+
+node "Application Server\n(Docker Cluster)" as AppServer {
+  node "Container: Auth Service" as AuthContainer {
+    artifact "app.py" as AuthApp
+    artifact "requirements.txt" as AuthReq
+  }
+  
+  node "Container: Session Service" as SessionContainer {
+    artifact "app.py" as SessionApp
+    artifact "requirements.txt" as SessionReq
+  }
+  
+  node "Container: Community Service" as CommunityContainer {
+    artifact "app.py" as CommunityApp
+    artifact "requirements.txt" as CommunityReq
+  }
+  
+  node "Container: Chat Service" as ChatContainer {
+    artifact "app.py" as ChatApp
+    artifact "requirements.txt" as ChatReq
+  }
+  
+  artifact "Gunicorn (WSGI)" as Gunicorn
+  artifact "Django/Flask" as Framework
+}
+
+node "Database Server" as DBServer {
+  node "PostgreSQL" as PostgreSQL {
+    artifact "database_schema.sql" as DBSchema
+    artifact "helphub_db" as MainDB
+  }
+  
+  node "Redis" as Redis {
+    artifact "sessions" as Sessions
+    artifact "cache" as Cache
+  }
+}
+
+node "Storage Server" as Storage {
+  node "S3-Compatible Storage" as S3 {
+    artifact "avatars/" as Avatars
+    artifact "media/" as Media
+    artifact "backups/" as Backups
+  }
+}
+
+node "Notification Server" as NotifServer {
+  node "Firebase Cloud Messaging" as Firebase
+  node "Email Service (SMTP)" as Email
+}
+
+' Связи
+MobileApp --> Nginx : HTTPS (443)
+WebApp --> Nginx : HTTPS (443)
+Nginx --> Gunicorn : HTTP/2 (8000)
+Gunicorn --> AuthContainer
+Gunicorn --> SessionContainer
+Gunicorn --> CommunityContainer
+Gunicorn --> ChatContainer
+
+AuthContainer --> PostgreSQL : PostgreSQL (5432)
+SessionContainer --> PostgreSQL : PostgreSQL (5432)
+CommunityContainer --> PostgreSQL : PostgreSQL (5432)
+ChatContainer --> PostgreSQL : PostgreSQL (5432)
+
+AuthContainer --> Redis : Redis (6379)
+SessionContainer --> Redis : Redis (6379)
+
+ChatContainer --> S3 : HTTPS
+CommunityContainer --> S3 : HTTPS
+
+SessionContainer --> Firebase : Push Notification
+ChatContainer --> Email : SMTP (587)
+
+note right of AppServer
+  docker-compose.yml\nоркестрация контейнеров
+end note
+
+note bottom of DBServer
+  Репликация:\nMaster-Slave\nBackup: ежедневный
+end note
+
+@enduml
