@@ -1,1 +1,61 @@
+@startuml activity-diagram
 
+skinparam backgroundColor White
+skinparam activity {
+  BackgroundColor White
+  BorderColor Black
+  ArrowColor Black
+}
+skinparam note {
+  BackgroundColor LightYellow
+  BorderColor Gray
+}
+
+start
+
+:RegisteredUser нажимает\n"Экстренная помощь";
+
+:Система определяет\nместоположение;
+
+:Сбор данных о состоянии\n(опциональный опрос);
+
+:Выбор типа помощи:\n(Чат / Звонок / Видео);
+
+:HelpRequest.generateSession();
+
+:MatchingService ищет\nдоступного психолога;
+
+note right
+  Критерии поиска:
+  - специализация
+  - язык
+  - рейтинг
+  - доступность
+end note
+
+if (Психолог найден?) then (Да)
+  :Psychologist получает\nуведомление;
+  
+  if (Принимает сессию?) then (Да)
+    :Session.start();
+    :Установка соединения;
+    :Проведение сессии;
+    :Session.end();
+    :Сохранение в истории;
+    stop
+  else (Нет / Таймаут)
+    :Повторный поиск\n(попытка 2/3);
+    if (Все попытки исчерпаны?) then (Да)
+      :Предложить чат-бот\nили обратный звонок;
+      stop
+    else (Нет)
+      :Поиск следующего\nпсихолога;
+      detach
+    endif
+  endif
+else (Нет)
+  :Предложить чат-бот\nили обратный звонок;
+  stop
+endif
+
+@enduml
