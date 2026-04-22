@@ -1,0 +1,48 @@
+@startuml
+interface UserComponent {
+    + getId(): int
+    + getName(): String
+    + getPermissions(): List<String>
+    + sendMessage(msg: String)
+}
+
+class BasicUser {
+    - id: int
+    - name: String
+    - email: String
+    + getId(): int
+    + getName(): String
+    + getPermissions(): List<String>
+    + sendMessage(msg: String)
+}
+
+abstract class UserDecorator {
+    # wrappedUser: UserComponent
+    + UserDecorator(user: UserComponent)
+    + getId(): int
+    + getName(): String
+    + getPermissions(): List<String>
+    + sendMessage(msg: String)
+}
+
+class AnonymousModeDecorator {
+    + getName(): String
+    + sendMessage(msg: String)
+}
+
+class PremiumFeaturesDecorator {
+    + getPermissions(): List<String>
+    + accessVIPQueue()
+}
+
+class DataExportDecorator {
+    + exportHistory(): File
+}
+
+UserComponent <|.. BasicUser
+UserComponent <|.. UserDecorator
+UserDecorator o-- UserComponent
+UserDecorator <|-- AnonymousModeDecorator
+UserDecorator <|-- PremiumFeaturesDecorator
+UserDecorator <|-- DataExportDecorator
+@enduml
