@@ -1,0 +1,27 @@
+@startuml
+actor User as U
+participant "Chat Service" as CS
+participant "Session Monitor" as SM
+participant "Emergency System" as ES
+participant "Moderator Service" as MS
+
+U -> CS: sendMessage("Мне очень плохо, хочу все прекратить")
+CS -> SM: checkMessageSafety(msg)
+SM -> SM: detectRiskKeywords()
+SM -> SM: setStatus(CRITICAL)
+SM -> ES: update(CRITICAL, sessionContext)
+SM -> MS: update(CRITICAL, sessionContext)
+
+activate ES
+ES -> ES: triggerSOSProtocol()
+ES --> SM: SOS Activated
+deactivate ES
+
+activate MS
+MS -> MS: createHighPriorityTicket()
+MS --> SM: Ticket Created
+deactivate MS
+
+SM --> CS: Block further automated replies
+CS --> U: showHelpResources()
+@enduml
