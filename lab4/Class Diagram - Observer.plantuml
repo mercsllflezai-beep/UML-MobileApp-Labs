@@ -1,0 +1,46 @@
+@startuml
+interface Observer {
+    + update(status: String, context: Object)
+}
+
+interface Subject {
+    + attach(o: Observer)
+    + detach(o: Observer)
+    + notifyObservers()
+}
+
+class SessionMonitor {
+    - observers: List<Observer>
+    - currentStatus: String
+    - sessionId: UUID
+    + attach(o: Observer)
+    + detach(o: Observer)
+    + notifyObservers()
+    + setStatus(newStatus: String)
+}
+
+class ModeratorNotifier {
+    + update(status: String, context: Object)
+    - sendTicketToAdmin()
+}
+
+class EmergencyAlertSystem {
+    + update(status: String, context: Object)
+    - triggerSOSProtocol()
+}
+
+class PsychologistDashboard {
+    + update(status: String, context: Object)
+    - highlightClientUI()
+}
+
+Subject <|.. SessionMonitor
+Observer <|.. ModeratorNotifier
+Observer <|.. EmergencyAlertSystem
+Observer <|.. PsychologistDashboard
+
+SessionMonitor o-- Observer : notifies
+SessionMonitor ..> ModeratorNotifier : triggers
+SessionMonitor ..> EmergencyAlertSystem : triggers
+SessionMonitor ..> PsychologistDashboard : updates
+@enduml
