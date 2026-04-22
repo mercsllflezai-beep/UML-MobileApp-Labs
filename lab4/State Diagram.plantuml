@@ -1,0 +1,23 @@
+@startuml
+[*] --> Idle : Create Session
+
+Idle --> Active : Connect User & Psychologist
+
+Active --> Paused : User requests pause
+Paused --> Active : Resume
+
+Active --> Critical : Risk detected (Observer triggered)
+Critical --> Active : Risk resolved by Moderator
+Critical --> Terminated : Emergency services called
+
+Active --> Completed : Time limit reached / Manual end
+Completed --> [*]
+
+Terminated --> [*]
+
+note right of Critical
+    В этом состоянии активируются
+    наблюдатели: Moderators,
+    Emergency Services
+end note
+@enduml
