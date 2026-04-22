@@ -1,0 +1,60 @@
+@startuml
+interface SessionFactory {
+    + createSession(): Session
+    + createConnection(): Connection
+}
+
+class StandardSessionFactory {
+    + createSession(): IndividualSession
+    + createConnection(): SecureChatConnection
+}
+
+class EmergencySessionFactory {
+    + createSession(): CrisisSession
+    + createConnection(): PriorityHotLineConnection
+}
+
+abstract class Session {
+    + id: UUID
+    + startTime: DateTime
+    + status: String
+    + start()
+    + end()
+}
+
+class IndividualSession {
+    + psychologistId: int
+    + topic: String
+}
+
+class CrisisSession {
+    + riskLevel: int
+    + autoRecord: boolean
+    + notifySupervisor()
+}
+
+interface Connection {
+    + connect()
+    + send(message: String)
+}
+
+class SecureChatConnection {
+    + encryptKey: String
+}
+
+class PriorityHotLineConnection {
+    + latency: int
+    + isEncrypted: boolean
+}
+
+SessionFactory <|.. StandardSessionFactory
+SessionFactory <|.. EmergencySessionFactory
+StandardSessionFactory ..> IndividualSession : creates
+StandardSessionFactory ..> SecureChatConnection : creates
+EmergencySessionFactory ..> CrisisSession : creates
+EmergencySessionFactory ..> PriorityHotLineConnection : creates
+Session <|-- IndividualSession
+Session <|-- CrisisSession
+Connection <|-- SecureChatConnection
+Connection <|-- PriorityHotLineConnection
+@enduml
